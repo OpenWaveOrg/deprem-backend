@@ -106,3 +106,18 @@ async def get_user_parameters(info: Request):
     except Exception as e:
         logging.error(e)
         return e
+
+
+@app.get("/select_options")
+async def select_options():
+    """
+    :return: the updated user data
+    """
+    try:
+        logger.info("Select options method was called.")
+
+        return db.select_options()
+
+    except Exception as e:
+        logging.error(e)
+        return e

@@ -179,3 +179,45 @@ class DbWrapper:
         except Exception as e:
             logger.error(e)
             return e
+
+    def select_options(self):
+        """
+        :return: a list of all the options
+        """
+        try:
+            user_collection = self.get_users_lat_lon()
+
+            konum_il, konum_ilce, konum_mahalle, kisi_sayisi, adres, apartman, sokak = (
+                set(),
+                set(),
+                set(),
+                set(),
+                set(),
+                set(),
+                set(),
+            )
+
+            for user in user_collection:
+                konum_il.add(user["konum_il"])
+                konum_ilce.add(user["konum_ilce"])
+                konum_mahalle.add(user["konum_mahalle"])
+                kisi_sayisi.add(user["kisi_sayisi"])
+                adres.add(user["adres"])
+                apartman.add(user["apartman"])
+                sokak.add(user["sokak"])
+
+            logger.info("Select options method was called.")
+
+            return {
+                "konum_il": list(konum_il),
+                "konum_ilce": list(konum_ilce),
+                "konum_mahalle": list(konum_mahalle),
+                "kisi_sayisi": list(kisi_sayisi),
+                "adres": list(adres),
+                "apartman": list(apartman),
+                "sokak": list(sokak),
+            }
+
+        except Exception as e:
+            logger.error(e)
+            return e

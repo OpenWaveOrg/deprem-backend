@@ -12,7 +12,7 @@ pydantic.json.ENCODERS_BY_TYPE[ObjectId] = str
 
 db = DbWrapper()
 
-all_addresses = db.get_users()[2500:3000]
+all_addresses = db.get_users()[3500:4000]
 for i in all_addresses:
     try:
         address = f"{i['konum_il'], i['konum_ilce'], i['konum_mahalle'], i['adres']}"
