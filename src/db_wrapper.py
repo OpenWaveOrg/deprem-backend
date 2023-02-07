@@ -1,9 +1,12 @@
 import os
 
+import certifi
 from dotenv import find_dotenv, load_dotenv
 from fastapi import HTTPException
 from loguru import logger
 from pymongo import MongoClient
+
+ca = certifi.where()
 
 load_dotenv(find_dotenv())
 
@@ -18,7 +21,7 @@ class DbWrapper:
         """
         try:
             self.connection_string = os.environ.get("MONGODB_PWD")
-            self.client = MongoClient(self.connection_string)
+            self.client = MongoClient(self.connection_string, tlsCAFile=ca)
 
             logger.info("Connected to MongoDB. Setup has completed.")
 

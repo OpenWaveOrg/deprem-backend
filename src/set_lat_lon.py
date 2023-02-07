@@ -1,4 +1,5 @@
 import ast
+import time
 
 import pydantic
 import requests
@@ -12,8 +13,7 @@ pydantic.json.ENCODERS_BY_TYPE[ObjectId] = str
 
 db = DbWrapper()
 
-all_addresses = db.get_users()
-
+all_addresses = db.get_users()[1499:2000]
 for i in all_addresses:
     try:
         address = f"{i['konum_il'], i['konum_ilce'], i['konum_mahalle'], i['adres']}"
@@ -26,7 +26,6 @@ for i in all_addresses:
             f"https://public-sdc.trendyol.com/discovery-web-websfxgeolocation-santral/geocode",  # noqa F841
             params={"address": address},
         )
-
         if req.status_code == 200:
             req = req.json()
 
@@ -43,11 +42,16 @@ for i in all_addresses:
                 )
             else:
                 logger.info("Lat lon method was failed!")
-
-                requests.post(
-                    "http://localhost:8000/set_user_lat_lon",
-                    json={"user_data": {"_id": str(i["_id"])}, "lat": "", "lon": ""},
-                )
+                # check if user have lat and lon if not empty dont update
+                if i["lat"] == "" and i["lon"] == "":
+                    requests.post(
+                        "http://localhost:8000/set_user_lat_lon",
+                        json={
+                            "user_data": {"_id": str(i["_id"])},
+                            "lat": "",
+                            "lon": "",
+                        },
+                    )
         else:
             logger.info("Lat lon method was failed!!!!!!")
 
@@ -55,7 +59,7 @@ for i in all_addresses:
                 "http://localhost:8000/set_user_lat_lon",
                 json={"user_data": {"_id": str(i["_id"])}, "lat": "", "lon": ""},
             )
-
+        time.sleep(60)
     except Exception as e:
         logger.error(e)
         continue
