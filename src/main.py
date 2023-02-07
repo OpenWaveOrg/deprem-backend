@@ -1,11 +1,16 @@
+import os
+
 import pydantic
 from bson.objectid import ObjectId
+from dotenv import find_dotenv, load_dotenv
 from fastapi import FastAPI, Request
 from loguru import logger
 from loguru import logger as logging
 from starlette.middleware.cors import CORSMiddleware
 
-from db_wrapper import DbWrapper
+from src.db_wrapper import DbWrapper
+
+load_dotenv(find_dotenv())
 
 pydantic.json.ENCODERS_BY_TYPE[ObjectId] = str
 
@@ -36,15 +41,30 @@ async def root(info: Request):
         return e
 
 
-@app.get("/get_user")
-async def get_user():
+@app.get("/get_users")
+async def get_users():
     """
     :return: a list of all the latitudes and longitudes
     """
     try:
         logger.info("Get lat lon method was called.")
 
-        return db.get_lat_lon()
+        return db.get_users()
+
+    except Exception as e:
+        logging.error(e)
+        return e
+
+
+@app.get("/get_users_lat_lon")
+async def get_users_lat_lon():
+    """
+    :return: a list of all the latitudes and longitudes
+    """
+    try:
+        logger.info("Get lat lon method was called.")
+
+        return db.get_users_lat_lon()
 
     except Exception as e:
         logging.error(e)
@@ -61,7 +81,27 @@ async def set_user_lat_lon(info: Request):
         logger.info("Set lat lon method was called.")
         req = await info.json()
 
+        if req["token"] != os.environ.get("TOKEN"):
+            return "Token is not valid"
+
         return db.set_user_lat_lon(req["user_data"], req["lat"], req["lon"])
+
+    except Exception as e:
+        logging.error(e)
+        return e
+
+
+@app.get("/get_user_parameters")
+async def get_user_parameters(info: Request):
+    """
+    :param info: the user data to update
+    :return: the updated user data
+    """
+    try:
+        logger.info("Get user parameters method was called.")
+        req = await info.json()
+
+        return db.get_user_parameters(req)
 
     except Exception as e:
         logging.error(e)

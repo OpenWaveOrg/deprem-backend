@@ -105,7 +105,7 @@ class DbWrapper:
 
             logger.info("Get users method was called.")
 
-            return collection.find()
+            return list(collection.find())
 
         except Exception as e:
             logger.error(e)
@@ -129,6 +129,51 @@ class DbWrapper:
 
             return HTTPException(
                 status_code=200, detail="Lat lon method was called successfully!"
+            )
+
+        except Exception as e:
+            logger.error(e)
+            return e
+
+    def get_users_lat_lon(self):
+        """
+        :return: a list of all the latitudes and longitudes
+        """
+        try:
+            collection = self.get_collection("users")
+
+            logger.info("Get lat lon method was called.")
+
+            return list(
+                collection.find(
+                    {
+                        "lat": {"$exists": True, "$ne": ""},
+                        "lon": {"$exists": True, "$ne": ""},
+                    }
+                )
+            )
+
+        except Exception as e:
+            logger.error(e)
+            return e
+
+    def get_user_parameters(self, user_data: dict):
+        """
+        :param user_data: the data of the user to insert
+        :return: True if inserted, False otherwise
+        """
+        try:
+            collection = self.get_collection("users")
+
+            # get the user with user_data parameters and search in the collection users
+            logger.info("User parameters method was called successfully!")
+            users = collection.find(user_data)
+
+            return list(users)
+
+            return HTTPException(
+                status_code=200,
+                detail="User parameters method was called successfully!",
             )
 
         except Exception as e:
