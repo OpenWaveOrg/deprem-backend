@@ -12,7 +12,7 @@ pydantic.json.ENCODERS_BY_TYPE[ObjectId] = str
 
 db = DbWrapper()
 
-all_addresses = db.get_users()[3500:4000]
+all_addresses = db.get_users()[785:1000]
 for i in all_addresses:
     try:
         address = f"{i['konum_il'], i['konum_ilce'], i['konum_mahalle'], i['adres']}"
@@ -34,14 +34,14 @@ for i in all_addresses:
                 requests.post(
                     "http://localhost:8000/set_user_lat_lon",
                     json={
-                        "user_data": {"_id": str(i["_id"])},
+                        "_id": str(i["_id"]),
                         "lat": req["results"][0]["geometry"]["location"]["lat"],
                         "lon": req["results"][0]["geometry"]["location"]["lng"],
                     },
                 )
             else:
                 logger.info("Lat lon method was failed!")
-                # check if user have lat and lon if not empty dont update
+
                 if i["lat"] == "" and i["lon"] == "":
                     requests.post(
                         "http://localhost:8000/set_user_lat_lon",

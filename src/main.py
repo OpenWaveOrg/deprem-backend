@@ -1,5 +1,3 @@
-import os
-
 import pydantic
 from bson.objectid import ObjectId
 from dotenv import find_dotenv, load_dotenv
@@ -78,13 +76,10 @@ async def set_user_lat_lon(info: Request):
     :return: the updated user data
     """
     try:
-        logger.info("Set lat lon method was called.")
+        logger.info("Set lat lon method was called!!!!!!!!!")
         req = await info.json()
 
-        if req["token"] != os.environ.get("TOKEN"):
-            return "Token is not valid"
-
-        return db.set_user_lat_lon(req["user_data"], req["lat"], req["lon"])
+        return db.set_user_lat_lon(user_id=req["_id"], lat=req["lat"], lon=req["lon"])
 
     except Exception as e:
         logging.error(e)
